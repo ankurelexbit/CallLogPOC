@@ -72,9 +72,14 @@ public class MainActivity extends Activity {
 
     private boolean isRoamingActive(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getActiveNetworkInfo();
-        if(ni != null) {
-            return ni.isRoaming();
+        NetworkInfo[] ni = cm.getAllNetworkInfo();
+//        NetworkInfo ni = ConnectivityManagerCompat.getNetworkInfoFromBroadcast(cm, new Intent("android.intent.action.SERVICE_STATE"));
+        for (NetworkInfo n : ni) {
+            if (n != null) {
+                if (n.isRoaming()) {
+                    return n.isRoaming();
+                }
+            }
         }
         return false;
     }
