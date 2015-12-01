@@ -1,9 +1,13 @@
 package com.test.calllogpoc;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.CallLog;
+import android.telephony.TelephonyManager;
 import android.widget.TextView;
 
 import java.sql.Date;
@@ -33,7 +37,9 @@ public class MainActivity extends Activity {
         int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
         int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
         int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-        sb.append("Call Log :");
+        sb.append("Roaming : " + isRoamingActive());
+        sb.append("\nSim operator : " + getSimOperator());
+        sb.append("\nCall Log :");
         while (managedCursor.moveToNext()) {
             long idVal = managedCursor.getLong(id);
             String phNum = managedCursor.getString(number);
@@ -64,4 +70,17 @@ public class MainActivity extends Activity {
         textView.setText(sb);
     }
 
+    private boolean isRoamingActive(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if(ni != null) {
+            return ni.isRoaming();
+        }
+        return false;
+    }
+
+    private String getSimOperator(){
+        TelephonyManager tel = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        return tel.getSimOperatorName().toString();
+    }
 }
